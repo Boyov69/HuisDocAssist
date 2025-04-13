@@ -1,12 +1,25 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+
+import { useEffect } from "react";
+import { Outlet } from "react-router-dom";
+import Navbar from "@/components/Navbar";
 
 const Index = () => {
+  useEffect(() => {
+    // Titel van het document updaten
+    document.title = "AI-Frontdesk Huisartsassistent";
+  }, []);
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Your Blank App</h1>
-        <p className="text-xl text-gray-600">Start building your amazing project here!</p>
-      </div>
+    <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-900">
+      <Navbar />
+      <main className="flex-1 container mx-auto px-4 pt-20 pb-8">
+        <Outlet />
+      </main>
+      <footer className="py-4 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700">
+        <div className="container mx-auto px-4 text-center text-sm text-gray-500 dark:text-gray-400">
+          &copy; {new Date().getFullYear()} AI-Frontdesk Huisartsassistent. Alle rechten voorbehouden.
+        </div>
+      </footer>
     </div>
   );
 };
