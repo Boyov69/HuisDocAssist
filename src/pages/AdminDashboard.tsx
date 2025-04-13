@@ -14,10 +14,10 @@ const AdminDashboard = () => {
   
   // Voorbeeld gebruikers data
   const [users, setUsers] = useState<AdminUser[]>([
-    { id: 1, name: "Dr. Janssen", email: "drjanssen@huisarts.nl", role: "huisarts", status: "Actief", lastLogin: "13 apr 2025" },
-    { id: 2, name: "Annemarie Smit", email: "asmit@huisarts.nl", role: "assistent", status: "Actief", lastLogin: "12 apr 2025" },
-    { id: 3, name: "Peter de Vries", email: "pdevries@huisarts.nl", role: "huisarts", status: "Inactief", lastLogin: "2 apr 2025" },
-    { id: 4, name: "Emma Bakker", email: "ebakker@huisarts.nl", role: "assistent", status: "Actief", lastLogin: "11 apr 2025" },
+    { id: 1, name: "Dr. Janssen", email: "drjanssen@huisarts.nl", role: "huisarts", status: "Actief", lastLogin: "13 apr 2025", practice: "Huisartsenpraktijk Zorgzaam" },
+    { id: 2, name: "Annemarie Smit", email: "asmit@huisarts.nl", role: "assistent", status: "Actief", lastLogin: "12 apr 2025", practice: "Huisartsenpraktijk Zorgzaam" },
+    { id: 3, name: "Peter de Vries", email: "pdevries@huisarts.nl", role: "huisarts", status: "Inactief", lastLogin: "2 apr 2025", practice: "Medisch Centrum Noord" },
+    { id: 4, name: "Emma Bakker", email: "ebakker@huisarts.nl", role: "assistent", status: "Actief", lastLogin: "11 apr 2025", practice: "Groepspraktijk Gezond Leven" },
   ]);
 
   const [stats, setStats] = useState({

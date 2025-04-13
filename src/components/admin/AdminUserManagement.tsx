@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { Users } from "lucide-react";
+import { Users, PencilIcon, Save } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -9,6 +9,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
 import { AdminUser } from "@/types/admin";
 import { useAuth } from "@/contexts/AuthContext";
@@ -18,14 +19,40 @@ interface AdminUserManagementProps {
   onUserChange: (updatedUsers: AdminUser[]) => void;
 }
 
+interface EditableUser extends AdminUser {
+  isEditing?: boolean;
+}
+
 const AdminUserManagement = ({ users, onUserChange }: AdminUserManagementProps) => {
   const { user } = useAuth();
   const [showAddUserDialog, setShowAddUserDialog] = useState(false);
+  const [editableUsers, setEditableUsers] = useState<EditableUser[]>(users.map(user => ({...user, isEditing: false})));
   const [newUser, setNewUser] = useState<Partial<AdminUser>>({
     name: "",
     email: "",
     role: "assistent",
+    practice: "",
   });
+  
+  const [practices] = useState([
+    "Huisartsenpraktijk Zorgzaam",
+    "Medisch Centrum Noord",
+    "Groepspraktijk Gezond Leven",
+    "Huisartsengroep Centrum"
+  ]);
+
+  // Synchroniseer de editableUsers wanneer de users prop verandert
+  const updateEditableUsers = () => {
+    setEditableUsers(users.map(user => {
+      const existingEditableUser = editableUsers.find(eu => eu.id === user.id);
+      return existingEditableUser ? existingEditableUser : {...user, isEditing: false};
+    }));
+  };
+
+  // Update editableUsers wanneer users verandert
+  if (JSON.stringify(users.map(u => u.id)) !== JSON.stringify(editableUsers.map(u => u.id))) {
+    updateEditableUsers();
+  }
 
   const handleAddUser = () => {
     if (!newUser.name || !newUser.email) {
@@ -40,13 +67,14 @@ const AdminUserManagement = ({ users, onUserChange }: AdminUserManagementProps) 
       email: newUser.email || "",
       role: newUser.role || "assistent",
       status: "Actief", // Explicitly use the literal type "Actief"
-      lastLogin: "Nog niet ingelogd"
+      lastLogin: "Nog niet ingelogd",
+      practice: newUser.practice || "Huisartsenpraktijk Zorgzaam"
     };
 
     const updatedUsers = [...users, userToAdd];
     onUserChange(updatedUsers);
     setShowAddUserDialog(false);
-    setNewUser({ name: "", email: "", role: "assistent" });
+    setNewUser({ name: "", email: "", role: "assistent", practice: "" });
     
     toast.success(`Gebruiker ${userToAdd.name} is toegevoegd`);
   };
@@ -73,6 +101,37 @@ const AdminUserManagement = ({ users, onUserChange }: AdminUserManagementProps) 
     onUserChange(updatedUsers);
     
     toast.success(`Gebruiker ${userToDelete.name} is verwijderd`);
+  };
+
+  const toggleEditMode = (id: number) => {
+    setEditableUsers(prev => prev.map(user => 
+      user.id === id 
+        ? { ...user, isEditing: !user.isEditing } 
+        : user
+    ));
+  };
+
+  const handleEditField = (id: number, field: keyof AdminUser, value: any) => {
+    setEditableUsers(prev => prev.map(user => 
+      user.id === id 
+        ? { ...user, [field]: value } 
+        : user
+    ));
+  };
+
+  const saveUserChanges = (id: number) => {
+    const editedUser = editableUsers.find(u => u.id === id);
+    if (!editedUser) return;
+    
+    const updatedUsers = users.map(user => 
+      user.id === id 
+        ? { ...editedUser, isEditing: false } 
+        : user
+    );
+    
+    onUserChange(updatedUsers);
+    toggleEditMode(id);
+    toast.success(`Gebruiker ${editedUser.name} is bijgewerkt`);
   };
 
   return (
@@ -133,6 +192,20 @@ const AdminUserManagement = ({ users, onUserChange }: AdminUserManagementProps) 
                     )}
                   </select>
                 </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="practice">Praktijk</Label>
+                  <select
+                    id="practice"
+                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                    value={newUser.practice}
+                    onChange={(e) => setNewUser({...newUser, practice: e.target.value})}
+                  >
+                    <option value="" disabled>Selecteer een praktijk</option>
+                    {practices.map((practice) => (
+                      <option key={practice} value={practice}>{practice}</option>
+                    ))}
+                  </select>
+                </div>
               </div>
               <DialogFooter>
                 <Button variant="outline" onClick={() => setShowAddUserDialog(false)}>
@@ -152,13 +225,14 @@ const AdminUserManagement = ({ users, onUserChange }: AdminUserManagementProps) 
             <TableRow>
               <TableHead>Gebruiker</TableHead>
               <TableHead>Rol</TableHead>
+              <TableHead>Praktijk</TableHead>
               <TableHead>Laatste login</TableHead>
               <TableHead>Status</TableHead>
               <TableHead className="text-right">Acties</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {users.map((user) => (
+            {editableUsers.map((user) => (
               <TableRow key={user.id}>
                 <TableCell>
                   <div className="flex items-center space-x-3">
@@ -166,20 +240,66 @@ const AdminUserManagement = ({ users, onUserChange }: AdminUserManagementProps) 
                       <AvatarFallback>{user.name.substring(0, 2)}</AvatarFallback>
                     </Avatar>
                     <div>
-                      <p className="font-medium">{user.name}</p>
-                      <p className="text-xs text-muted-foreground">{user.email}</p>
+                      {user.isEditing ? (
+                        <Input 
+                          value={user.name} 
+                          onChange={(e) => handleEditField(user.id, 'name', e.target.value)}
+                          className="w-full"
+                        />
+                      ) : (
+                        <p className="font-medium">{user.name}</p>
+                      )}
+                      {user.isEditing ? (
+                        <Input 
+                          value={user.email} 
+                          onChange={(e) => handleEditField(user.id, 'email', e.target.value)} 
+                          className="w-full text-xs mt-1"
+                        />
+                      ) : (
+                        <p className="text-xs text-muted-foreground">{user.email}</p>
+                      )}
                     </div>
                   </div>
                 </TableCell>
                 <TableCell>
-                  <span className={`capitalize px-2 py-1 rounded-full text-xs ${
-                    user.role === 'huisarts' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300' : 
-                    user.role === 'assistent' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300' : 
-                    user.role === 'admin' ? 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300' : 
-                    'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300'
-                  }`}>
-                    {user.role}
-                  </span>
+                  {user.isEditing ? (
+                    <select
+                      value={user.role}
+                      onChange={(e) => handleEditField(user.id, 'role', e.target.value)}
+                      className="flex h-8 w-full rounded-md border border-input bg-background px-3 py-1 text-xs ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                    >
+                      <option value="assistent">Assistent</option>
+                      <option value="huisarts">Huisarts</option>
+                      {user?.role === 'super-admin' && (
+                        <option value="admin">Admin</option>
+                      )}
+                    </select>
+                  ) : (
+                    <span className={`capitalize px-2 py-1 rounded-full text-xs ${
+                      user.role === 'huisarts' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300' : 
+                      user.role === 'assistent' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300' : 
+                      user.role === 'admin' ? 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300' : 
+                      'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300'
+                    }`}>
+                      {user.role}
+                    </span>
+                  )}
+                </TableCell>
+                <TableCell>
+                  {user.isEditing ? (
+                    <select
+                      value={user.practice || ""}
+                      onChange={(e) => handleEditField(user.id, 'practice', e.target.value)}
+                      className="flex h-8 w-full rounded-md border border-input bg-background px-3 py-1 text-xs ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                    >
+                      <option value="" disabled>Selecteer een praktijk</option>
+                      {practices.map((practice) => (
+                        <option key={practice} value={practice}>{practice}</option>
+                      ))}
+                    </select>
+                  ) : (
+                    <span className="text-sm">{user.practice || "Niet toegewezen"}</span>
+                  )}
                 </TableCell>
                 <TableCell>{user.lastLogin}</TableCell>
                 <TableCell>
@@ -196,7 +316,25 @@ const AdminUserManagement = ({ users, onUserChange }: AdminUserManagementProps) 
                   </div>
                 </TableCell>
                 <TableCell className="text-right">
-                  <Button variant="outline" size="sm" className="mr-2">Bewerken</Button>
+                  {user.isEditing ? (
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      className="mr-2"
+                      onClick={() => saveUserChanges(user.id)}
+                    >
+                      <Save className="h-4 w-4 mr-1" /> Opslaan
+                    </Button>
+                  ) : (
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      className="mr-2"
+                      onClick={() => toggleEditMode(user.id)}
+                    >
+                      <PencilIcon className="h-4 w-4 mr-1" /> Bewerken
+                    </Button>
+                  )}
                   <Button 
                     variant="outline" 
                     size="sm" 

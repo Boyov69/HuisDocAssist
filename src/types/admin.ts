@@ -10,4 +10,5 @@ export interface AdminUser {
   status: AdminUserStatus;
   avatar?: string;
   lastLogin?: string;
+  practice?: string; // Toegevoegd practice veld
 }
