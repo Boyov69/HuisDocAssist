@@ -62,7 +62,7 @@ const AdminDashboard = () => {
       name: newUser.name || "",
       email: newUser.email || "",
       role: newUser.role || "assistent",
-      status: "Actief",
+      status: "Actief", // Explicitly use the literal type "Actief"
       lastLogin: "Nog niet ingelogd"
     };
 
@@ -79,7 +79,8 @@ const AdminDashboard = () => {
   const handleToggleStatus = (id: number) => {
     const updatedUsers = users.map(user => {
       if (user.id === id) {
-        const newStatus = user.status === "Actief" ? "Inactief" : "Actief";
+        // Explicitly use the literal types for status
+        const newStatus: "Actief" | "Inactief" = user.status === "Actief" ? "Inactief" : "Actief";
         toast.success(`Gebruiker ${user.name} is nu ${newStatus.toLowerCase()}`);
         return { ...user, status: newStatus };
       }
