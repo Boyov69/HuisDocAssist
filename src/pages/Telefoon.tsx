@@ -2,6 +2,7 @@
 import { useState } from "react";
 import ActiveCallSection from "@/components/telefoon/ActiveCallSection";
 import CallHistoryTabs from "@/components/telefoon/CallHistoryTabs";
+import { Toaster } from "@/components/ui/toaster";
 
 const Telefoon = () => {
   const [activeCall, setActiveCall] = useState<boolean>(false);
@@ -30,6 +31,7 @@ const Telefoon = () => {
       />
       
       <CallHistoryTabs />
+      <Toaster />
     </div>
   );
 };
