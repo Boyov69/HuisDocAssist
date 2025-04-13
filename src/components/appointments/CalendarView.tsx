@@ -24,7 +24,8 @@ const CalendarView = () => {
   }, {} as Record<string, typeof appointments>);
 
   // Custom day rendering for the calendar
-  const dayWithAppointments = (day: Date) => {
+  const dayWithAppointments = (props: { date: Date; displayMonth: Date }) => {
+    const day = props.date;
     const dateStr = format(day, "dd MMMM yyyy", { locale: nl });
     const hasAppointments = appointmentDates[dateStr] && appointmentDates[dateStr].length > 0;
     
@@ -78,7 +79,7 @@ const CalendarView = () => {
         onMonthChange={setMonth}
         className="rounded-md border w-full"
         components={{
-          DayContent: ({ day }) => dayWithAppointments(day),
+          DayContent: dayWithAppointments,
         }}
       />
 
