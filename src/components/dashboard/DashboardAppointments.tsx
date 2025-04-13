@@ -2,53 +2,59 @@
 import React from "react";
 import { Calendar } from "lucide-react";
 import AccordionCard from "@/components/AccordionCard";
+import AppointmentItem, { AppointmentItemProps } from "@/components/appointments/AppointmentItem";
+import ItemList from "@/components/common/ItemList";
 
-const DashboardAppointments = () => {
+const appointments: AppointmentItemProps[] = [
+  {
+    time: "09:00",
+    patientName: "Dhr. van Veen",
+    type: "Controle",
+    description: "Diabetes type 2 controle"
+  },
+  {
+    time: "09:15",
+    patientName: "Mevr. Jansen",
+    type: "Consult",
+    description: "Hoofdpijn, duizeligheid"
+  },
+  {
+    time: "09:30",
+    patientName: "Kim de Vries",
+    type: "Consult",
+    description: "Huiduitslag"
+  },
+  {
+    time: "09:45",
+    patientName: "Dhr. Bakker",
+    type: "Controle",
+    description: "Bloeddruk controle"
+  }
+];
+
+const DashboardAppointments: React.FC = () => {
+  const handleViewAll = () => {
+    console.log("View all appointments clicked");
+    // Navigation logic could be added here
+  };
+
   return (
     <AccordionCard 
       title="Afspraken vandaag" 
       icon={<Calendar className="h-5 w-5" />}
       defaultOpen={true}
     >
-      <div className="space-y-4">
-        <div className="border-b pb-2">
-          <div className="flex justify-between mb-1">
-            <div className="font-medium">09:00 - Dhr. van Veen</div>
-            <div className="text-sm text-medical">Controle</div>
-          </div>
-          <div className="text-sm text-muted-foreground">Diabetes type 2 controle</div>
-        </div>
-        
-        <div className="border-b pb-2">
-          <div className="flex justify-between mb-1">
-            <div className="font-medium">09:15 - Mevr. Jansen</div>
-            <div className="text-sm text-medical">Consult</div>
-          </div>
-          <div className="text-sm text-muted-foreground">Hoofdpijn, duizeligheid</div>
-        </div>
-        
-        <div className="border-b pb-2">
-          <div className="flex justify-between mb-1">
-            <div className="font-medium">09:30 - Kim de Vries</div>
-            <div className="text-sm text-medical">Consult</div>
-          </div>
-          <div className="text-sm text-muted-foreground">Huiduitslag</div>
-        </div>
-        
-        <div className="border-b pb-2">
-          <div className="flex justify-between mb-1">
-            <div className="font-medium">09:45 - Dhr. Bakker</div>
-            <div className="text-sm text-medical">Controle</div>
-          </div>
-          <div className="text-sm text-muted-foreground">Bloeddruk controle</div>
-        </div>
-        
-        <div className="text-center mt-4">
-          <button className="text-sm text-medical hover:underline">
-            Alle afspraken bekijken
-          </button>
-        </div>
-      </div>
+      <ItemList viewAllLabel="Alle afspraken bekijken" onViewAll={handleViewAll}>
+        {appointments.map((appointment, index) => (
+          <AppointmentItem 
+            key={index}
+            time={appointment.time}
+            patientName={appointment.patientName}
+            type={appointment.type}
+            description={appointment.description}
+          />
+        ))}
+      </ItemList>
     </AccordionCard>
   );
 };
