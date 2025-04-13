@@ -4,6 +4,23 @@ import AccordionCard from "@/components/AccordionCard";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import PatientRegistrationDialog from "@/components/patienten/PatientRegistrationDialog";
+import { 
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 
 const Afspraken = () => {
   // Dummy afspraken data
@@ -64,10 +81,48 @@ const Afspraken = () => {
         </p>
       </div>
 
-      <div className="flex justify-end mb-4">
-        <Button className="bg-medical hover:bg-medical-accent">
-          Nieuwe afspraak
-        </Button>
+      <div className="flex justify-end mb-4 gap-2">
+        <Sheet>
+          <SheetTrigger asChild>
+            <Button className="bg-medical hover:bg-medical-accent">
+              Nieuwe afspraak
+            </Button>
+          </SheetTrigger>
+          <SheetContent className="sm:max-w-lg">
+            <SheetHeader>
+              <SheetTitle>Nieuwe afspraak plannen</SheetTitle>
+              <SheetDescription>
+                Selecteer een patiënt of registreer een nieuwe patiënt om een afspraak te plannen.
+              </SheetDescription>
+            </SheetHeader>
+            
+            <div className="py-6 space-y-6">
+              <div className="space-y-2">
+                <h3 className="text-sm font-medium">Patiënt</h3>
+                <div className="flex flex-col sm:flex-row gap-2">
+                  <Button variant="outline" className="justify-start w-full">
+                    <User className="mr-2 h-4 w-4" />
+                    Selecteer patiënt
+                  </Button>
+                  <PatientRegistrationDialog 
+                    triggerText="Nieuwe patiënt" 
+                    buttonVariant="outline"
+                  />
+                </div>
+              </div>
+              
+              {/* Hier zou meer logica komen voor het plannen van afspraken */}
+              <p className="text-muted-foreground text-sm">
+                Selecteer eerst een patiënt om door te gaan met het plannen van een afspraak.
+              </p>
+            </div>
+          </SheetContent>
+        </Sheet>
+        
+        <PatientRegistrationDialog 
+          triggerText="Nieuwe patiënt"
+          buttonVariant="outline"
+        />
       </div>
 
       <Tabs defaultValue="today" className="w-full">
