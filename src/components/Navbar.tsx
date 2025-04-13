@@ -1,24 +1,17 @@
 
 import React, { useState, useEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
-import { useAuth } from "@/contexts/AuthContext";
-import { Sun, Moon, Menu, X, User, Settings, LogOut } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useTheme } from "@/hooks/use-theme";
 import { cn } from "@/lib/utils";
-import { 
-  DropdownMenu, 
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger
-} from "@/components/ui/dropdown-menu";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import Logo from "./navbar/Logo";
+import DesktopNav from "./navbar/DesktopNav";
+import MobileMenu from "./navbar/MobileMenu";
+import ThemeToggle from "./navbar/ThemeToggle";
+import ProfileMenu from "./navbar/ProfileMenu";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Navbar = () => {
-  const location = useLocation();
-  const { user, hasRole, logout } = useAuth();
-  const { theme, setTheme } = useTheme();
+  const { user } = useAuth();
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -33,32 +26,9 @@ const Navbar = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Toggle tussen dark en light mode
-  const toggleTheme = () => {
-    setTheme(theme === "dark" ? "light" : "dark");
-  };
-
   // Toggle mobiel menu
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!mobileMenuOpen);
-  };
-
-  // Controleer of link actief is
-  const isActive = (path: string) => {
-    return location.pathname === path
-      ? "text-medical font-medium"
-      : "text-foreground hover:text-medical transition-colors";
-  };
-
-  // Bereken initialen voor avatar fallback
-  const getInitials = (name: string) => {
-    if (!name) return "?";
-    return name
-      .split(' ')
-      .map(part => part[0])
-      .join('')
-      .toUpperCase()
-      .substring(0, 2);
   };
 
   return (
@@ -73,86 +43,18 @@ const Navbar = () => {
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <div className="flex-shrink-0">
-            <Link to="/" className="flex items-center">
-              <span className="text-xl font-bold text-medical">AI-Frontdesk</span>
-              <span className="ml-2 text-sm text-muted-foreground">Huisartsassistent</span>
-            </Link>
-          </div>
+          <Logo />
 
-          {/* Desktop menu */}
-          <div className="hidden md:flex md:items-center md:space-x-6">
-            <Link to="/" className={isActive("/")}>
-              Dashboard
-            </Link>
-            <Link to="/afspraken" className={isActive("/afspraken")}>
-              Afspraken
-            </Link>
-            <Link to="/telefoon" className={isActive("/telefoon")}>
-              Telefoon
-            </Link>
-            <Link to="/patienten" className={isActive("/patienten")}>
-              Patiënten
-            </Link>
-            <Link to="/triage" className={isActive("/triage")}>
-              Triage
-            </Link>
-            {hasRole(['admin', 'super-admin']) && (
-              <Link to="/instellingen" className={isActive("/instellingen")}>
-                Instellingen
-              </Link>
-            )}
-          </div>
+          {/* Desktop navigation */}
+          <DesktopNav />
 
           {/* Right side - theme toggle, profile and mobile menu button */}
           <div className="flex items-center space-x-2">
             {/* Theme toggle button */}
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={toggleTheme}
-              className="mr-2"
-              aria-label={`Schakel naar ${theme === 'dark' ? 'light' : 'dark'} mode`}
-            >
-              {theme === "dark" ? <Sun size={20} /> : <Moon size={20} />}
-            </Button>
+            <ThemeToggle />
 
             {/* User profile dropdown */}
-            {user && (
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="sm" className="flex items-center gap-2 rounded-full">
-                    <Avatar className="h-8 w-8">
-                      <AvatarImage src={user.avatar} alt={user.name} />
-                      <AvatarFallback>{getInitials(user.name)}</AvatarFallback>
-                    </Avatar>
-                    <span className="hidden sm:inline font-medium">{user.name}</span>
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-56 animate-fade-in">
-                  <div className="flex items-center justify-start gap-2 p-2 mb-1">
-                    <div className="flex flex-col space-y-0.5">
-                      <p className="text-sm font-medium">{user.name}</p>
-                      <p className="text-xs text-muted-foreground">{user.email}</p>
-                    </div>
-                  </div>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem className="cursor-pointer">
-                    <User className="mr-2 h-4 w-4" />
-                    <span>Mijn profiel</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem className="cursor-pointer">
-                    <Settings className="mr-2 h-4 w-4" />
-                    <span>Instellingen</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={logout} className="cursor-pointer">
-                    <LogOut className="mr-2 h-4 w-4" />
-                    <span>Uitloggen</span>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            )}
+            {user && <ProfileMenu />}
 
             {/* Mobile menu button */}
             <Button
@@ -169,56 +71,7 @@ const Navbar = () => {
       </div>
 
       {/* Mobile menu */}
-      {mobileMenuOpen && (
-        <div className="md:hidden animate-fade-in">
-          <div className="px-2 pt-2 pb-3 space-y-1 bg-background/95 backdrop-blur-md border-t border-border">
-            <Link
-              to="/"
-              className="block px-3 py-2 rounded-md hover:bg-muted"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              Dashboard
-            </Link>
-            <Link
-              to="/afspraken"
-              className="block px-3 py-2 rounded-md hover:bg-muted"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              Afspraken
-            </Link>
-            <Link
-              to="/telefoon"
-              className="block px-3 py-2 rounded-md hover:bg-muted"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              Telefoon
-            </Link>
-            <Link
-              to="/patienten"
-              className="block px-3 py-2 rounded-md hover:bg-muted"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              Patiënten
-            </Link>
-            <Link
-              to="/triage"
-              className="block px-3 py-2 rounded-md hover:bg-muted"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              Triage
-            </Link>
-            {hasRole(['admin', 'super-admin']) && (
-              <Link
-                to="/instellingen"
-                className="block px-3 py-2 rounded-md hover:bg-muted"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Instellingen
-              </Link>
-            )}
-          </div>
-        </div>
-      )}
+      <MobileMenu isOpen={mobileMenuOpen} onClose={() => setMobileMenuOpen(false)} />
     </nav>
   );
 };
