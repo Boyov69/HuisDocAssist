@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import SettingsTabs from "@/components/settings/SettingsTabs";
+import { toast } from "sonner";
 
 const Instellingen = () => {
   const { user } = useAuth();
@@ -10,6 +11,7 @@ const Instellingen = () => {
   const handleSave = () => {
     // Simulate saving
     setSaved(true);
+    toast.success("Instellingen opgeslagen");
     setTimeout(() => setSaved(false), 3000);
   };
 
