@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Calendar, Clock, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -14,12 +14,21 @@ import { appointments, weekData } from "@/data/appointmentData";
 import { toast } from "@/hooks/use-toast";
 
 const Afspraken = () => {
+  const [appointmentsList, setAppointmentsList] = useState(appointments);
+  
+  // Update appointmentsList whenever the appointments array changes
+  useEffect(() => {
+    setAppointmentsList([...appointments]);
+  }, [appointments]);
+
   const handleAppointmentCreated = () => {
     toast({
       title: "Afspraak gepland",
       description: "De afspraak is succesvol ingepland.",
       duration: 3000,
     });
+    // Refresh de appointments lijst
+    setAppointmentsList([...appointments]);
   };
 
   return (
@@ -71,7 +80,7 @@ const Afspraken = () => {
             </CardHeader>
             <CardContent>
               <AppointmentsList 
-                appointments={appointments} 
+                appointments={appointmentsList} 
                 date="13 April 2025" 
               />
             </CardContent>

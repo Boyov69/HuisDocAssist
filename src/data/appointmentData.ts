@@ -58,6 +58,26 @@ export const appointments: Appointment[] = [
   }
 ];
 
+// Helper functies voor het beheren van afspraken
+export const updateAppointmentStatus = (id: number, status: "confirmed" | "pending" | "cancelled") => {
+  const index = appointments.findIndex(app => app.id === id);
+  if (index !== -1) {
+    appointments[index].status = status;
+    return true;
+  }
+  return false;
+};
+
+export const rescheduleAppointment = (id: number, newTime: string, newDate: string) => {
+  const index = appointments.findIndex(app => app.id === id);
+  if (index !== -1) {
+    appointments[index].time = newTime;
+    appointments[index].date = newDate;
+    return true;
+  }
+  return false;
+};
+
 export const weekData = [
   {
     date: "2025-04-13",

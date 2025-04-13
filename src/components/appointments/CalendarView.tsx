@@ -15,11 +15,14 @@ const CalendarView = () => {
 
   // Create a mapping of dates with appointments
   const appointmentDates = appointments.reduce((acc, appointment) => {
-    const dateStr = appointment.date;
-    if (!acc[dateStr]) {
-      acc[dateStr] = [];
+    // Alleen afspraken die niet geannuleerd zijn
+    if (appointment.status !== "cancelled") {
+      const dateStr = appointment.date;
+      if (!acc[dateStr]) {
+        acc[dateStr] = [];
+      }
+      acc[dateStr].push(appointment);
     }
-    acc[dateStr].push(appointment);
     return acc;
   }, {} as Record<string, typeof appointments>);
 
@@ -99,8 +102,18 @@ const CalendarView = () => {
                       <span className="font-medium">{appointment.time}</span>
                       <span className="text-medical">{appointment.type}</span>
                     </div>
-                    <div>{appointment.patient}</div>
-                    <div className="text-sm text-muted-foreground">{appointment.notes}</div>
+                    <div className="flex justify-between mt-1">
+                      <span>{appointment.patient}</span>
+                      <span className={`px-2 py-0.5 text-xs font-medium rounded-full ${
+                        appointment.status === "confirmed" ? "bg-green-100 text-green-800" :
+                        appointment.status === "pending" ? "bg-amber-100 text-amber-800" :
+                        "bg-red-100 text-red-800"
+                      }`}>
+                        {appointment.status === "confirmed" ? "Bevestigd" :
+                         appointment.status === "pending" ? "In behandeling" : "Geannuleerd"}
+                      </span>
+                    </div>
+                    <div className="text-sm text-muted-foreground mt-1">{appointment.notes}</div>
                   </div>
                 ))}
               </div>
