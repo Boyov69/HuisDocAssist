@@ -91,6 +91,7 @@ export const useCallHistory = () => {
   return {
     recentCalls,
     editingCall,
+    setEditingCall,
     editedNotes,
     setEditedNotes,
     callbackDialogOpen,

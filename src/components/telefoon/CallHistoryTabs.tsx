@@ -15,6 +15,7 @@ const CallHistoryTabs = () => {
     editingCall,
     editedNotes,
     setEditedNotes,
+    setEditingCall,
     callbackDialogOpen,
     setCallbackDialogOpen,
     callbackNumber,
