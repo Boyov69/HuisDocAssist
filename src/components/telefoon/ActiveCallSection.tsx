@@ -13,6 +13,44 @@ interface ActiveCallSectionProps {
 }
 
 const ActiveCallSection = ({ activeCall, onEndCall, onStartCall }: ActiveCallSectionProps) => {
+  const [callDuration, setCallDuration] = useState<number>(0);
+  const [callStartTime, setCallStartTime] = useState<string>("");
+  const [inHold, setInHold] = useState<boolean>(false);
+  
+  // Start de timer wanneer een gesprek actief wordt
+  useState(() => {
+    let timer: NodeJS.Timeout;
+    
+    if (activeCall) {
+      // Set start time
+      const now = new Date();
+      setCallStartTime(
+        `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`
+      );
+      setCallDuration(0);
+      
+      // Start duration timer
+      timer = setInterval(() => {
+        setCallDuration(prev => prev + 1);
+      }, 1000);
+    }
+    
+    return () => {
+      if (timer) clearInterval(timer);
+    };
+  }, [activeCall]);
+  
+  // Format duration as mm:ss
+  const formatDuration = (seconds: number): string => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  };
+  
+  const toggleHold = () => {
+    setInHold(!inHold);
+  };
+
   return (
     <Card className={activeCall ? "border-medical" : ""}>
       <CardHeader className={`pb-2 ${activeCall ? "bg-medical-muted" : ""}`}>
@@ -27,16 +65,23 @@ const ActiveCallSection = ({ activeCall, onEndCall, onStartCall }: ActiveCallSec
             <div className="flex items-center justify-between">
               <div>
                 <div className="flex items-center">
-                  <Badge className="bg-green-500 mr-2 animate-pulse">Live</Badge>
+                  <Badge className={`${inHold ? "bg-amber-500" : "bg-green-500"} mr-2 animate-pulse`}>
+                    {inHold ? "In wacht" : "Live"}
+                  </Badge>
                   <h3 className="font-medium">Inkomend gesprek: 06-55443322</h3>
                 </div>
                 <p className="text-sm text-muted-foreground mt-1">
-                  Gestart om 09:32 • Duur: 01:24
+                  Gestart om {callStartTime} • Duur: {formatDuration(callDuration)}
                 </p>
               </div>
               <div className="flex space-x-2">
-                <Button variant="outline" size="sm">
-                  In wacht
+                <Button 
+                  variant={inHold ? "default" : "outline"} 
+                  size="sm"
+                  onClick={toggleHold}
+                  className={inHold ? "bg-amber-500 hover:bg-amber-600" : ""}
+                >
+                  {inHold ? "Hervatten" : "In wacht"}
                 </Button>
                 <Button variant="destructive" size="sm" onClick={onEndCall}>
                   Ophangen
@@ -44,7 +89,7 @@ const ActiveCallSection = ({ activeCall, onEndCall, onStartCall }: ActiveCallSec
               </div>
             </div>
             
-            <TranscriptionSection />
+            <TranscriptionSection activeCall={activeCall} onEndCall={onEndCall} />
             <NotesSection />
           </div>
         ) : (
