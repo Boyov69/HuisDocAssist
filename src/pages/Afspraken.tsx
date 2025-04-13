@@ -9,9 +9,19 @@ import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTr
 import AppointmentsList from "@/components/appointments/AppointmentsList";
 import WeeklyOverview from "@/components/appointments/WeeklyOverview";
 import NewAppointmentForm from "@/components/appointments/NewAppointmentForm";
+import CalendarView from "@/components/appointments/CalendarView";
 import { appointments, weekData } from "@/data/appointmentData";
+import { toast } from "@/hooks/use-toast";
 
 const Afspraken = () => {
+  const handleAppointmentCreated = () => {
+    toast({
+      title: "Afspraak gepland",
+      description: "De afspraak is succesvol ingepland.",
+      duration: 3000,
+    });
+  };
+
   return (
     <div className="space-y-6 animate-fade-in">
       <div>
@@ -36,7 +46,7 @@ const Afspraken = () => {
               </SheetDescription>
             </SheetHeader>
             
-            <NewAppointmentForm />
+            <NewAppointmentForm onSuccess={handleAppointmentCreated} />
           </SheetContent>
         </Sheet>
         
@@ -102,10 +112,7 @@ const Afspraken = () => {
               <CardTitle className="text-xl">Kalender</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-center text-muted-foreground py-20">
-                <Calendar className="h-16 w-16 mx-auto mb-4 text-medical" />
-                <p>Kalender weergave is in ontwikkeling</p>
-              </div>
+              <CalendarView />
             </CardContent>
           </Card>
         </TabsContent>
