@@ -3,40 +3,51 @@ import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { cn } from "@/lib/utils";
+import { motion } from "framer-motion";
 
 const DesktopNav = () => {
   const location = useLocation();
   const { hasRole } = useAuth();
 
-  // Controleer of link actief is
+  // Determine if link is active
   const isActive = (path: string) => {
-    return location.pathname === path
-      ? "text-medical font-medium"
-      : "text-foreground hover:text-medical transition-colors";
+    return location.pathname === path;
   };
 
   return (
     <div className="hidden md:flex md:items-center md:space-x-6">
-      <Link to="/" className={isActive("/")}>
-        Dashboard
-      </Link>
-      <Link to="/afspraken" className={isActive("/afspraken")}>
-        Afspraken
-      </Link>
-      <Link to="/telefoon" className={isActive("/telefoon")}>
-        Telefoon
-      </Link>
-      <Link to="/patienten" className={isActive("/patienten")}>
-        Patiënten
-      </Link>
-      <Link to="/triage" className={isActive("/triage")}>
-        Triage
-      </Link>
-      {hasRole(['admin', 'super-admin']) && (
-        <Link to="/instellingen" className={isActive("/instellingen")}>
-          Instellingen
-        </Link>
-      )}
+      {[
+        { path: "/", label: "Dashboard" },
+        { path: "/afspraken", label: "Afspraken" },
+        { path: "/telefoon", label: "Telefoon" },
+        { path: "/patienten", label: "Patiënten" },
+        { path: "/triage", label: "Triage" },
+        ...(hasRole(['admin', 'super-admin']) 
+          ? [{ path: "/instellingen", label: "Instellingen" }] 
+          : []
+        )
+      ].map(({ path, label }) => (
+        <div key={path} className="relative">
+          <Link
+            to={path}
+            className={cn(
+              "transition-colors duration-200 hover:text-medical",
+              isActive(path) ? "text-medical font-medium" : "text-foreground"
+            )}
+          >
+            {label}
+          </Link>
+          {isActive(path) && (
+            <motion.div 
+              className="absolute bottom-[-8px] left-0 w-full h-0.5 bg-medical rounded-full"
+              layoutId="navigation-underline"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.2 }}
+            />
+          )}
+        </div>
+      ))}
     </div>
   );
 };
