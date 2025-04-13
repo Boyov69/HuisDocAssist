@@ -99,7 +99,7 @@ const PatientCard = ({ patient }: PatientCardProps) => {
           </TabsContent>
         </Tabs>
         
-        <PatientActions />
+        <PatientActions patient={patient} />
       </div>
     </AccordionCard>
   );

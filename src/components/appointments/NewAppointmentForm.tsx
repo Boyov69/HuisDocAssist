@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { User, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import PatientSelector from "@/components/patienten/PatientSelector";
@@ -12,15 +12,23 @@ import { Patient } from "@/components/patienten/PatientCard";
 
 interface NewAppointmentFormProps {
   onSuccess?: () => void;
+  preselectedPatient?: Patient;
 }
 
-const NewAppointmentForm = ({ onSuccess }: NewAppointmentFormProps) => {
+const NewAppointmentForm = ({ onSuccess, preselectedPatient }: NewAppointmentFormProps) => {
   const patients = getAllPatients();
-  const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
+  const [selectedPatient, setSelectedPatient] = useState<Patient | null>(preselectedPatient || null);
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
   const [type, setType] = useState("");
   const [notes, setNotes] = useState("");
+
+  // Update selected patient when preselectedPatient changes
+  useEffect(() => {
+    if (preselectedPatient) {
+      setSelectedPatient(preselectedPatient);
+    }
+  }, [preselectedPatient]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -44,15 +52,24 @@ const NewAppointmentForm = ({ onSuccess }: NewAppointmentFormProps) => {
       <div className="space-y-2">
         <h3 className="text-sm font-medium">Patiënt</h3>
         <div className="flex flex-col sm:flex-row gap-2">
-          <PatientSelector 
-            patients={patients}
-            onSelect={setSelectedPatient}
-            selectedPatient={selectedPatient}
-          />
-          <PatientRegistrationDialog 
-            triggerText="Nieuwe patiënt" 
-            buttonVariant="outline"
-          />
+          {preselectedPatient ? (
+            <div className="flex items-center p-2 border rounded-md bg-muted">
+              <User className="h-4 w-4 mr-2" />
+              <span>{preselectedPatient.name}</span>
+            </div>
+          ) : (
+            <>
+              <PatientSelector 
+                patients={patients}
+                onSelect={setSelectedPatient}
+                selectedPatient={selectedPatient}
+              />
+              <PatientRegistrationDialog 
+                triggerText="Nieuwe patiënt" 
+                buttonVariant="outline"
+              />
+            </>
+          )}
         </div>
       </div>
       
