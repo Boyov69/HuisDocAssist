@@ -1,48 +1,53 @@
 
-import { useState, ReactNode } from "react";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { ChevronDown } from "lucide-react";
+import React from "react";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 
 interface AccordionCardProps {
   title: string;
-  icon?: ReactNode;
-  children: ReactNode;
-  defaultOpen?: boolean;
+  description?: string;
+  items: {
+    id: string;
+    title: string;
+    content: React.ReactNode;
+  }[];
+  defaultValue?: string;
   className?: string;
 }
 
 const AccordionCard = ({
   title,
-  icon,
-  children,
-  defaultOpen = false,
+  description,
+  items,
+  defaultValue,
   className,
 }: AccordionCardProps) => {
-  const [isOpen, setIsOpen] = useState(defaultOpen);
-
   return (
-    <Card className={cn("overflow-hidden mb-4", className)}>
-      <CardHeader
-        className="p-4 cursor-pointer flex flex-row items-center justify-between bg-medical-muted"
-        onClick={() => setIsOpen(!isOpen)}
-      >
-        <div className="flex items-center">
-          {icon && <span className="mr-2 text-medical">{icon}</span>}
-          <h3 className="font-medium text-medical-muted-foreground">{title}</h3>
-        </div>
-        <ChevronDown
-          className={cn(
-            "h-4 w-4 text-medical-muted-foreground transition-transform duration-200",
-            isOpen && "transform rotate-180"
-          )}
-        />
+    <Card className={cn("shadow-sm", className)}>
+      <CardHeader className="bg-gradient-to-r from-medical-muted to-muted rounded-t-lg">
+        <CardTitle className="text-xl font-semibold text-medical">{title}</CardTitle>
+        {description && <CardDescription>{description}</CardDescription>}
       </CardHeader>
-      {isOpen && (
-        <CardContent className="p-4 animate-accordion-down">
-          {children}
-        </CardContent>
-      )}
+      <CardContent className="p-0">
+        <Accordion type="single" defaultValue={defaultValue} collapsible className="w-full">
+          {items.map((item) => (
+            <AccordionItem key={item.id} value={item.id} className="border-b last:border-0">
+              <AccordionTrigger className="px-6 py-4 text-md font-medium hover:bg-muted/50 transition-colors">
+                {item.title}
+              </AccordionTrigger>
+              <AccordionContent className="px-6 py-4 bg-card">
+                {item.content}
+              </AccordionContent>
+            </AccordionItem>
+          ))}
+        </Accordion>
+      </CardContent>
     </Card>
   );
 };

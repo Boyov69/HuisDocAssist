@@ -1,186 +1,168 @@
 
-import { useState, useEffect } from "react";
-import { Link, NavLink } from "react-router-dom";
-import { useAuth, UserRole } from "@/contexts/AuthContext";
+import React, { useState, useEffect } from "react";
+import { Link, useLocation } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
+import { Sun, Moon, Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { 
-  DropdownMenu,
-  DropdownMenuContent, 
-  DropdownMenuItem, 
-  DropdownMenuLabel, 
-  DropdownMenuSeparator, 
-  DropdownMenuTrigger 
-} from "@/components/ui/dropdown-menu";
-import { ChevronDown } from "lucide-react";
+import { useTheme } from "@/hooks/use-theme";
+import { cn } from "@/lib/utils";
 
 const Navbar = () => {
-  const { user, logout, hasRole } = useAuth();
-  const [scrolled, setScrolled] = useState(false);
-  
-  // Luister naar scroll events om de navbar stijl aan te passen
+  const location = useLocation();
+  const { hasRole } = useAuth();
+  const { theme, setTheme } = useTheme();
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  // Detecteer scroll om zwevend effect toe te passen
   useEffect(() => {
     const handleScroll = () => {
-      const isScrolled = window.scrollY > 10;
-      if (isScrolled !== scrolled) {
-        setScrolled(isScrolled);
-      }
+      const scrollPosition = window.scrollY;
+      setIsScrolled(scrollPosition > 10);
     };
-    
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [scrolled]);
 
-  // Functie om initialen te genereren voor avatar fallback
-  const getInitials = (name: string) => {
-    return name
-      .split(' ')
-      .map(part => part[0])
-      .join('')
-      .toUpperCase();
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  // Toggle tussen dark en light mode
+  const toggleTheme = () => {
+    setTheme(theme === "dark" ? "light" : "dark");
+  };
+
+  // Toggle mobiel menu
+  const toggleMobileMenu = () => {
+    setMobileMenuOpen(!mobileMenuOpen);
+  };
+
+  // Controleer of link actief is
+  const isActive = (path: string) => {
+    return location.pathname === path
+      ? "text-medical font-medium"
+      : "text-foreground hover:text-medical transition-colors";
   };
 
   return (
-    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-      scrolled ? "bg-white/90 dark:bg-gray-900/90 backdrop-blur-md shadow-md" : "bg-white dark:bg-gray-900"
-    }`}>
+    <nav
+      className={cn(
+        "fixed top-0 left-0 w-full z-50 transition-all duration-300",
+        isScrolled 
+          ? "bg-background/90 backdrop-blur-md shadow-md" 
+          : "bg-background"
+      )}
+    >
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
-          <div className="flex items-center">
+          {/* Logo */}
+          <div className="flex-shrink-0">
             <Link to="/" className="flex items-center">
-              <span className="text-2xl font-bold text-medical">
-                AI-Frontdesk
-              </span>
+              <span className="text-xl font-bold text-medical">AI-Frontdesk</span>
+              <span className="ml-2 text-sm text-muted-foreground">Huisartsassistent</span>
             </Link>
           </div>
-          
-          <div className="hidden md:flex space-x-1">
-            <NavLink 
-              to="/" 
-              end
-              className={({ isActive }) => 
-                `px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                  isActive 
-                    ? "bg-medical text-medical-foreground" 
-                    : "text-gray-700 dark:text-gray-300 hover:bg-medical-muted hover:text-medical-muted-foreground"
-                }`
-              }
-            >
+
+          {/* Desktop menu */}
+          <div className="hidden md:flex md:items-center md:space-x-6">
+            <Link to="/" className={isActive("/")}>
               Dashboard
-            </NavLink>
-            
-            <NavLink 
-              to="/afspraken" 
-              className={({ isActive }) => 
-                `px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                  isActive 
-                    ? "bg-medical text-medical-foreground" 
-                    : "text-gray-700 dark:text-gray-300 hover:bg-medical-muted hover:text-medical-muted-foreground"
-                }`
-              }
-            >
+            </Link>
+            <Link to="/afspraken" className={isActive("/afspraken")}>
               Afspraken
-            </NavLink>
-            
-            <NavLink 
-              to="/telefoon" 
-              className={({ isActive }) => 
-                `px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                  isActive 
-                    ? "bg-medical text-medical-foreground" 
-                    : "text-gray-700 dark:text-gray-300 hover:bg-medical-muted hover:text-medical-muted-foreground"
-                }`
-              }
-            >
+            </Link>
+            <Link to="/telefoon" className={isActive("/telefoon")}>
               Telefoon
-            </NavLink>
-            
-            <NavLink 
-              to="/patienten" 
-              className={({ isActive }) => 
-                `px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                  isActive 
-                    ? "bg-medical text-medical-foreground" 
-                    : "text-gray-700 dark:text-gray-300 hover:bg-medical-muted hover:text-medical-muted-foreground"
-                }`
-              }
-            >
+            </Link>
+            <Link to="/patienten" className={isActive("/patienten")}>
               Patiënten
-            </NavLink>
-            
-            <NavLink 
-              to="/triage" 
-              className={({ isActive }) => 
-                `px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                  isActive 
-                    ? "bg-medical text-medical-foreground" 
-                    : "text-gray-700 dark:text-gray-300 hover:bg-medical-muted hover:text-medical-muted-foreground"
-                }`
-              }
-            >
+            </Link>
+            <Link to="/triage" className={isActive("/triage")}>
               Triage
-            </NavLink>
-            
+            </Link>
             {hasRole(['admin', 'super-admin']) && (
-              <NavLink 
-                to="/instellingen" 
-                className={({ isActive }) => 
-                  `px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                    isActive 
-                      ? "bg-medical text-medical-foreground" 
-                      : "text-gray-700 dark:text-gray-300 hover:bg-medical-muted hover:text-medical-muted-foreground"
-                  }`
-                }
-              >
+              <Link to="/instellingen" className={isActive("/instellingen")}>
                 Instellingen
-              </NavLink>
+              </Link>
             )}
           </div>
-          
-          <div className="flex items-center gap-2">
-            {user ? (
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="relative h-8 w-8 rounded-full">
-                    <Avatar className="h-8 w-8">
-                      <AvatarImage src={user.avatar} alt={user.name} />
-                      <AvatarFallback className="bg-medical text-medical-foreground">
-                        {getInitials(user.name)}
-                      </AvatarFallback>
-                    </Avatar>
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-56" align="end" forceMount>
-                  <DropdownMenuLabel className="font-normal">
-                    <div className="flex flex-col space-y-1">
-                      <p className="text-sm font-medium leading-none">{user.name}</p>
-                      <p className="text-xs leading-none text-muted-foreground">
-                        {user.email}
-                      </p>
-                      {user.practice && (
-                        <p className="text-xs leading-none text-muted-foreground mt-1">
-                          {user.practice}
-                        </p>
-                      )}
-                    </div>
-                  </DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem asChild>
-                    <Link to="/profiel">Mijn profiel</Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={logout}>
-                    Uitloggen
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            ) : (
-              <Button asChild variant="default" className="bg-medical hover:bg-medical-accent text-white">
-                <Link to="/login">Inloggen</Link>
-              </Button>
-            )}
+
+          {/* Right side - theme toggle and mobile menu button */}
+          <div className="flex items-center">
+            {/* Theme toggle button */}
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={toggleTheme}
+              className="mr-2"
+              aria-label={`Schakel naar ${theme === 'dark' ? 'light' : 'dark'} mode`}
+            >
+              {theme === "dark" ? <Sun size={20} /> : <Moon size={20} />}
+            </Button>
+
+            {/* Mobile menu button */}
+            <Button
+              variant="ghost"
+              size="icon"
+              className="md:hidden"
+              onClick={toggleMobileMenu}
+              aria-label="Toggle menu"
+            >
+              {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+            </Button>
           </div>
         </div>
       </div>
+
+      {/* Mobile menu */}
+      {mobileMenuOpen && (
+        <div className="md:hidden animate-fade-in">
+          <div className="px-2 pt-2 pb-3 space-y-1 bg-background/95 backdrop-blur-md border-t border-border">
+            <Link
+              to="/"
+              className="block px-3 py-2 rounded-md hover:bg-muted"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              Dashboard
+            </Link>
+            <Link
+              to="/afspraken"
+              className="block px-3 py-2 rounded-md hover:bg-muted"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              Afspraken
+            </Link>
+            <Link
+              to="/telefoon"
+              className="block px-3 py-2 rounded-md hover:bg-muted"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              Telefoon
+            </Link>
+            <Link
+              to="/patienten"
+              className="block px-3 py-2 rounded-md hover:bg-muted"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              Patiënten
+            </Link>
+            <Link
+              to="/triage"
+              className="block px-3 py-2 rounded-md hover:bg-muted"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              Triage
+            </Link>
+            {hasRole(['admin', 'super-admin']) && (
+              <Link
+                to="/instellingen"
+                className="block px-3 py-2 rounded-md hover:bg-muted"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Instellingen
+              </Link>
+            )}
+          </div>
+        </div>
+      )}
     </nav>
   );
 };
