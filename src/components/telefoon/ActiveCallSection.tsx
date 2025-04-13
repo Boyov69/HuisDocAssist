@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Phone, Badge } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -18,7 +18,7 @@ const ActiveCallSection = ({ activeCall, onEndCall, onStartCall }: ActiveCallSec
   const [inHold, setInHold] = useState<boolean>(false);
   
   // Start de timer wanneer een gesprek actief wordt
-  useState(() => {
+  useEffect(() => {
     let timer: NodeJS.Timeout;
     
     if (activeCall) {
