@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { toast } from "sonner";
 
@@ -119,6 +118,14 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
           email: 'admin@test.com',
           role: 'admin',
           practice: 'Huisartsenpraktijk Gezond',
+        };
+      } else if (email === 'superadmin@test.com' && password === 'password') {
+        mockUser = {
+          id: '4',
+          name: 'Super Beheerder',
+          email: 'superadmin@test.com',
+          role: 'super-admin',
+          practice: 'Systeembeheer',
         };
       } else {
         throw new Error('Ongeldige inloggegevens');

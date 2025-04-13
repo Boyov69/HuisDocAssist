@@ -13,11 +13,14 @@ import Telefoon from "./pages/Telefoon";
 import Patienten from "./pages/Patienten";
 import Triage from "./pages/Triage";
 import Instellingen from "./pages/Instellingen";
+import AdminDashboard from "./pages/AdminDashboard";
+import SuperAdminDashboard from "./pages/SuperAdminDashboard";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import ForgotPassword from "./pages/ForgotPassword";
 import PrivateRoute from "./components/PrivateRoute";
 import AdminRoute from "./components/AdminRoute";
+import SuperAdminRoute from "./components/SuperAdminRoute";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -44,6 +47,11 @@ const App = () => (
                 
                 <Route element={<AdminRoute />}>
                   <Route path="instellingen" element={<Instellingen />} />
+                  <Route path="admin" element={<AdminDashboard />} />
+                </Route>
+                
+                <Route element={<SuperAdminRoute />}>
+                  <Route path="super-admin" element={<SuperAdminDashboard />} />
                 </Route>
               </Route>
             </Route>

@@ -23,7 +23,14 @@ const DesktopNav = () => {
         { path: "/patienten", label: "Patiënten" },
         { path: "/triage", label: "Triage" },
         ...(hasRole(['admin', 'super-admin']) 
-          ? [{ path: "/instellingen", label: "Instellingen" }] 
+          ? [
+              { path: "/instellingen", label: "Instellingen" },
+              { path: "/admin", label: "Admin" }
+            ] 
+          : []
+        ),
+        ...(hasRole(['super-admin']) 
+          ? [{ path: "/super-admin", label: "Super Admin" }] 
           : []
         )
       ].map(({ path, label }) => (

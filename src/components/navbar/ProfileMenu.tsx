@@ -1,6 +1,6 @@
 
 import React from "react";
-import { LogOut, Settings, User } from "lucide-react";
+import { LogOut, Settings, User, Shield, ServerCog } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { 
@@ -11,9 +11,10 @@ import {
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Link } from "react-router-dom";
 
 const ProfileMenu = () => {
-  const { user, logout } = useAuth();
+  const { user, logout, hasRole } = useAuth();
 
   if (!user) return null;
 
@@ -44,6 +45,7 @@ const ProfileMenu = () => {
           <div className="flex flex-col space-y-0.5">
             <p className="text-sm font-medium">{user.name}</p>
             <p className="text-xs text-muted-foreground">{user.email}</p>
+            <p className="text-xs text-muted-foreground capitalize">{user.role}</p>
           </div>
         </div>
         <DropdownMenuSeparator />
@@ -51,10 +53,32 @@ const ProfileMenu = () => {
           <User className="mr-2 h-4 w-4" />
           <span>Mijn profiel</span>
         </DropdownMenuItem>
-        <DropdownMenuItem className="cursor-pointer">
-          <Settings className="mr-2 h-4 w-4" />
-          <span>Instellingen</span>
-        </DropdownMenuItem>
+        
+        <Link to="/instellingen">
+          <DropdownMenuItem className="cursor-pointer">
+            <Settings className="mr-2 h-4 w-4" />
+            <span>Instellingen</span>
+          </DropdownMenuItem>
+        </Link>
+        
+        {hasRole(['admin', 'super-admin']) && (
+          <Link to="/admin">
+            <DropdownMenuItem className="cursor-pointer">
+              <Shield className="mr-2 h-4 w-4" />
+              <span>Admin Dashboard</span>
+            </DropdownMenuItem>
+          </Link>
+        )}
+        
+        {hasRole(['super-admin']) && (
+          <Link to="/super-admin">
+            <DropdownMenuItem className="cursor-pointer">
+              <ServerCog className="mr-2 h-4 w-4" />
+              <span>Super Admin Dashboard</span>
+            </DropdownMenuItem>
+          </Link>
+        )}
+        
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={logout} className="cursor-pointer">
           <LogOut className="mr-2 h-4 w-4" />
