@@ -59,6 +59,24 @@ Voor de telefoonfunctionaliteit is een API sleutel van [ElevenLabs](https://elev
 
 Zonder geldige sleutel werkt de live transcriptie en spraaksynthese niet.
 
+### .env bestand
+
+Voor lokaal gebruik kun je een `.env` bestand aanmaken op basis van `.env.example`.
+Hierin zet je je `ELEVENLABS_API_KEY` en eventueel een andere `PORT` voor de
+backend server. Start de server vervolgens met:
+
+```sh
+npm run backend
+```
+
+### Tests draaien
+
+Er staat een klein voorbeeldtestje in de map `tests`. Voer alle tests uit met:
+
+```sh
+npm test
+```
+
 ## How can I edit this code?
 
 There are several ways of editing your application.
