@@ -17,14 +17,16 @@ export const useTranscription = () => {
   const { showNotification } = useNotification();
   const [isRecording, setIsRecording] = useState(false);
   const [transcriptLines, setTranscriptLines] = useState<TranscriptionLine[]>([]);
-  const [apiKeyInput, setApiKeyInput] = useState(getApiKey());
+  const [apiKeyInput, setApiKeyInput] = useState('');
   const [showApiKeyDialog, setShowApiKeyDialog] = useState(false);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
 
-  // Controleer of er al een API sleutel is ingesteld
+  // Laad de API sleutel uit localStorage bij het laden van de hook
   useEffect(() => {
-    if (!getApiKey()) {
+    const key = getApiKey();
+    setApiKeyInput(key);
+    if (!key) {
       setShowApiKeyDialog(true);
     }
   }, []);
