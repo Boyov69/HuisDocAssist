@@ -1,8 +1,46 @@
-# Welcome to your Lovable project
+# AI-Frontdesk Huisartsassistent
+
+Deze applicatie simuleert een digitale frontdesk voor een huisartsenpraktijk. De interface is vooral gericht op assistenten en artsen en maakt gebruik van AI om inkomende telefoongesprekken automatisch te transcriberen en om patiënten- en praktijkgegevens te beheren.
 
 ## Project info
 
 **URL**: https://lovable.dev/projects/92fe03a6-1bd0-4890-bef4-8f03fde3defe
+
+## Belangrijkste functionaliteiten
+
+- **Telefooncentrale met live transcriptie** – ondersteunt inkomende gesprekken en gebruikt de ElevenLabs API om spraak direct om te zetten naar tekst en andersom.
+- **Patiëntbeheer en afspraken** – registreer nieuwe patiënten, plan afspraken en bekijk dossiers.
+- **Admin dashboards** – verschillende dashboards voor assistenten, artsen en beheerders met statistieken en gebruikersbeheer.
+
+## Setup
+
+Zorg dat Node.js en npm zijn geïnstalleerd. Je kunt bijvoorbeeld [nvm](https://github.com/nvm-sh/nvm#installing-and-updating) gebruiken om Node te installeren.
+
+```sh
+# Clone de repository
+git clone <YOUR_GIT_URL>
+
+# Ga naar de projectmap
+cd <YOUR_PROJECT_NAME>
+
+# Installeer dependencies
+npm install
+
+# Start een ontwikkelserver met hot reload
+npm run dev
+```
+
+Tijdens het ontwikkelen kun je ook via [Lovable](https://lovable.dev/projects/92fe03a6-1bd0-4890-bef4-8f03fde3defe) code genereren of GitHub gebruiken om bestanden te bewerken.
+
+### ElevenLabs API sleutel
+
+Voor de telefoonfunctionaliteit is een API sleutel van [ElevenLabs](https://elevenlabs.io) vereist. Maak in je ElevenLabs-account een nieuwe sleutel aan en houd deze bij de hand.
+
+1. Start de applicatie lokaal en navigeer naar het menu **Telefoon**.
+2. De eerste keer dat je deze pagina bezoekt verschijnt automatisch een dialoog om de sleutel in te voeren. Je kunt de dialoog later opnieuw openen via de knop **API Sleutel**.
+3. De sleutel wordt in de huidige browsersessie opgeslagen en gebruikt in [`src/services/elevenLabsService.ts`](src/services/elevenLabsService.ts) voor het transcriberen van spraak en het genereren van audio.
+
+Zonder geldige sleutel werkt de live transcriptie en spraaksynthese niet.
 
 ## How can I edit this code?
 
