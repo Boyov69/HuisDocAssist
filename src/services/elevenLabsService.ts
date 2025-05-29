@@ -14,13 +14,37 @@ export interface VoiceSettings {
 }
 
 // Deze API sleutel zou in de toekomst uit Supabase secrets moeten komen
+const STORAGE_KEY = 'elevenLabsApiKey';
 let apiKey = '';
+
+// Initialiseert de apiKey vanuit localStorage indien beschikbaar
+if (typeof window !== 'undefined') {
+  const storedKey = localStorage.getItem(STORAGE_KEY);
+  if (storedKey) {
+    apiKey = storedKey;
+  }
+}
 
 export const setApiKey = (key: string) => {
   apiKey = key;
+  try {
+    if (key) {
+      localStorage.setItem(STORAGE_KEY, key);
+    } else {
+      localStorage.removeItem(STORAGE_KEY);
+    }
+  } catch (e) {
+    console.error('Kon API sleutel niet opslaan in localStorage', e);
+  }
 };
 
-export const getApiKey = () => apiKey;
+export const getApiKey = () => {
+  if (!apiKey && typeof window !== 'undefined') {
+    const storedKey = localStorage.getItem(STORAGE_KEY);
+    if (storedKey) apiKey = storedKey;
+  }
+  return apiKey;
+};
 
 export const DEFAULT_VOICE_ID = "9BWtsMINqrJLrRacOk9x"; // Aria stem
 
