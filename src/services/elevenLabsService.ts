@@ -17,6 +17,14 @@ export interface VoiceSettings {
 const STORAGE_KEY = 'elevenLabsApiKey';
 let apiKey = '';
 
+// Haal een eventueel ingestelde API key uit Vite env variabelen
+if (!apiKey && typeof import.meta !== 'undefined') {
+  const envKey = import.meta.env.VITE_ELEVENLABS_API_KEY;
+  if (envKey) {
+    apiKey = envKey as string;
+  }
+}
+
 // Initialiseert de apiKey vanuit localStorage indien beschikbaar
 if (typeof window !== 'undefined') {
   const storedKey = localStorage.getItem(STORAGE_KEY);
