@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog } from "@/components/ui/dialog";
@@ -39,9 +39,14 @@ const AdminUserManagement = ({ users, onUserChange }: AdminUserManagementProps) 
   };
 
   // Update editableUsers wanneer users verandert
-  if (JSON.stringify(users.map(u => u.id)) !== JSON.stringify(editableUsers.map(u => u.id))) {
-    updateEditableUsers();
-  }
+  useEffect(() => {
+    if (
+      JSON.stringify(users.map(u => u.id)) !==
+      JSON.stringify(editableUsers.map(u => u.id))
+    ) {
+      updateEditableUsers();
+    }
+  }, [users]);
 
   const handleAddUser = (newUser: Partial<AdminUser>) => {
     if (!newUser.name || !newUser.email) {
