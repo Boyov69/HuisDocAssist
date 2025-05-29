@@ -32,6 +32,23 @@ npm run dev
 
 Tijdens het ontwikkelen kun je ook via [Lovable](https://lovable.dev/projects/92fe03a6-1bd0-4890-bef4-8f03fde3defe) code genereren of GitHub gebruiken om bestanden te bewerken.
 
+## Backend server
+
+In de map `server` staat een eenvoudige Node-server voor het opslaan van patiënten en afspraken. Start de server met:
+
+```sh
+node server/server.js
+```
+
+De server draait standaard op poort `3001` en ondersteunt de volgende endpoints:
+
+- `GET /api/patients` – lijst alle geregistreerde patiënten.
+- `POST /api/patients` – voeg een patiënt toe met JSON in de vorm `{ "name": "..." }`.
+- `GET /api/appointments` – lijst alle afspraken.
+- `POST /api/appointments` – maak een nieuwe afspraak aan met JSON zoals `{ "patientId": 1, "date": "..." }`.
+
+Gegevens worden alleen in het geheugen opgeslagen en gaan verloren wanneer je de server stopt.
+
 ### ElevenLabs API sleutel
 
 Voor de telefoonfunctionaliteit is een API sleutel van [ElevenLabs](https://elevenlabs.io) vereist. Maak in je ElevenLabs-account een nieuwe sleutel aan en houd deze bij de hand.
