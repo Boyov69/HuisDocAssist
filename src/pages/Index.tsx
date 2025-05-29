@@ -3,7 +3,6 @@ import { useEffect } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 import Navbar from "@/components/Navbar";
-import { Toaster } from "@/components/ui/toaster";
 
 const Index = () => {
   const location = useLocation();
@@ -33,7 +32,6 @@ const Index = () => {
           &copy; {new Date().getFullYear()} AI-Frontdesk Huisartsassistent. Alle rechten voorbehouden.
         </div>
       </footer>
-      <Toaster />
     </div>
   );
 };

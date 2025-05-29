@@ -2,7 +2,6 @@
 import { useState, useEffect } from "react";
 import ActiveCallSection from "@/components/telefoon/ActiveCallSection";
 import CallHistoryTabs from "@/components/telefoon/CallHistoryTabs";
-import { Toaster } from "@/components/ui/toaster";
 import ApiKeyDialog from "@/components/telefoon/ApiKeyDialog";
 import { getApiKey, setApiKey } from "@/services/elevenLabsService";
 import { useToast } from "@/hooks/use-toast";
@@ -78,7 +77,6 @@ const Telefoon = () => {
         onSave={saveApiKey}
       />
       
-      <Toaster />
     </div>
   );
 };
