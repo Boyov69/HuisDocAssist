@@ -50,21 +50,37 @@ const PatientRegistrationForm = ({ onSuccess }: PatientRegistrationFormProps) =>
     },
   });
 
-  function onSubmit(data: PatientFormValues) {
-    // Hier zou normaal de API call zijn om de patiënt te registreren
-    console.log("Nieuwe patiënt geregistreerd:", data);
-    
-    // Toon succesbericht
-    toast.success("Patiënt succesvol geregistreerd", {
-      description: `${data.name} is toegevoegd aan het systeem.`,
-    });
-    
-    // Reset het formulier
-    form.reset();
-    
-    // Callback indien nodig
-    if (onSuccess) {
-      onSuccess(data);
+  async function onSubmit(data: PatientFormValues) {
+    try {
+      const response = await fetch("http://localhost:3001/api/patients", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+
+      if (!response.ok) {
+        throw new Error("Er is iets misgegaan bij het registreren van de patiënt.");
+      }
+
+      const newPatient = await response.json();
+
+      // Toon succesbericht
+      toast.success("Patiënt succesvol geregistreerd", {
+        description: `${newPatient.name} is toegevoegd aan het systeem.`,
+      });
+
+      // Reset het formulier
+      form.reset();
+
+      // Callback indien nodig
+      if (onSuccess) {
+        onSuccess(newPatient);
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error(error.message);
     }
   }
 
